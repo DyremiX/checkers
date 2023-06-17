@@ -11,5 +11,11 @@ AI implemented using the minimax algorithm and alpha-beta pruning.
 - Drag & drop  
 - Various help facilities
 
+## Do zrobienia xD
+- Naprawić przeciąganie pionków, - Michał 
+- Poprawić menu, - Mateusz
+- uprościć wygląd, - Mateusz 
+- dodać logi ? - Michał
 
-<img width="641" alt="checkers" src="https://user-images.githubusercontent.com/13951953/41507113-c999fad6-7223-11e8-827a-afefd0e318d8.png">
+
+<img width="641" alt="checkers" src="https://www.bingeclock.com/memes/rick-and-morty___pointy_coconut_wins.jpg">
