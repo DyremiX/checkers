@@ -3,6 +3,8 @@ package main.game;
 import java.util.ArrayList;
 import java.util.Random;
 
+import main.gui.GUI;
+
 public class AI {
 
     // determines the depth that the AI searches to in minimax
@@ -65,6 +67,7 @@ public class AI {
      */
     private BoardState randomMove(ArrayList<BoardState> successors){
         if (successors.size() < 1){
+            GUI.updateLog("ERROR","Can't randomly choose from empty list.");
             throw new RuntimeException("Can't randomly choose from empty list.");
         }
         Random rand = new Random();

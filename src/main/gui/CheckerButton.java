@@ -1,9 +1,10 @@
 package main.gui;
 
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
+// import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import main.game.Game;
 import main.game.Piece;
 import main.game.Player;
+import main.gui.GUI;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -97,6 +98,7 @@ public class CheckerButton extends JButton{
         }
         catch(IOException e){
             System.out.println(e.toString());
+            GUI.updateLog("ERROR", e.getMessage());
         }
 
         if (buttonIcon != null){
