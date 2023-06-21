@@ -28,6 +28,7 @@ public class AI {
             return minimaxMove(successors);
         }
         else{
+            GUI.updateLog("ERROR", "Cannot generate moves for player if it's not their turn");
             throw new RuntimeException("Cannot generate moves for player if it's not their turn");
         }
     }
@@ -131,6 +132,7 @@ public class AI {
             }
             return v;
         }
+        GUI.updateLog("ERROR", "Error in minimax algorithm");
         throw new RuntimeException("Error in minimax algorithm");
     }
 }

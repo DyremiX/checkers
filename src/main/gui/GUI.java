@@ -26,6 +26,7 @@ public class GUI extends JFrame {
     private JPanel checkerboardPanel;
     private JPanel contentPane;
     static JPanel textPanel;
+    String resultText;
     // hint feature
     private BoardState hintMove;
     private List<Integer> helpMoves;
@@ -57,7 +58,7 @@ public class GUI extends JFrame {
      */
     private void settingsPopup() {
         // panel for options
-        JPanel panel = new JPanel(new GridLayout(5, 1));
+        JPanel panel = new JPanel(new GridLayout(9, 1));
         // difficulty slider
         JLabel text1 = new JLabel("Set Difficulty", 10);
         JSlider slider = new JSlider();
@@ -76,22 +77,37 @@ public class GUI extends JFrame {
         slider.setPreferredSize(new Dimension(200, 50));
         slider.setValue(3);
         // force takes option
-        JRadioButton forceTakesButton = new JRadioButton("Force Takes");
+        JRadioButton forceTakesButton = new JRadioButton("Force Takes",true);
         forceTakesButton.setSelected(Settings.FORCETAKES);
+
         // who gets first move?
         ButtonGroup buttonGroup = new ButtonGroup();
         JRadioButton humanFirstRadioButton = new JRadioButton("You Play First");
-        JRadioButton aiRadioButton = new JRadioButton("Computer Plays First");
+        JRadioButton aiRadioButton = new JRadioButton("Computer Plays First",true);
         buttonGroup.add(humanFirstRadioButton);
         buttonGroup.add(aiRadioButton);
         aiRadioButton.setSelected(Settings.FIRSTMOVE == Player.AI);
         humanFirstRadioButton.setSelected(Settings.FIRSTMOVE == Player.HUMAN);
+
+        // who gets first move?
+        ButtonGroup buttonGroup2 = new ButtonGroup();
+        JRadioButton heuristic1 = new JRadioButton("difference of pieces",true);
+        JRadioButton heuristic2 = new JRadioButton("proportions of pieces");
+        buttonGroup2.add(heuristic1);
+        buttonGroup2.add(heuristic2);
+        aiRadioButton.setSelected(Settings.HEURISTIC == 1);
+        humanFirstRadioButton.setSelected(Settings.HEURISTIC == 2);
+
         // add components to panel
         panel.add(text1);
         panel.add(slider);
         panel.add(forceTakesButton);
+        panel.add(new JLabel("Who plays first: ", 10));
         panel.add(humanFirstRadioButton);
         panel.add(aiRadioButton);
+        panel.add(new JLabel("How to compute points: ", 10));
+        panel.add(heuristic1);
+        panel.add(heuristic2);
         // pop up
         int result = JOptionPane.showConfirmDialog(null, panel, "Game Settings",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -100,7 +116,10 @@ public class GUI extends JFrame {
             Settings.AI_DEPTH = difficultyMapping.get(slider.getValue());
             System.out.println("AI depth = " + Settings.AI_DEPTH);
             Settings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
+            Settings.HEURISTIC = heuristic1.isSelected() ? 1 : 2;
             Settings.FORCETAKES = forceTakesButton.isSelected();
+            resultText = "Starting player: " + Settings.FIRSTMOVE + "\n" + "Force takes: " + Settings.FORCETAKES + "\n" + "Difficulty level: " + Settings.AI_DEPTH + "\n";
+            System.out.println(resultText);
         }
     }
 
@@ -120,18 +139,11 @@ public class GUI extends JFrame {
         setupMenuBar();
         checkerboardPanel = new JPanel(new GridBagLayout());
 
-        JPanel checkerboardAndLogPanel = new JPanel(new BorderLayout());
-
-        
-        
-        // JPanel checkerboardPanelArround = new JPanel(new GridBagLayout());
-        // checkerboardPanelArround.setPreferredSize(new Dimension(squares[i].getWidth() + 20,squares[i].getHeight()+ 20));
-        // checkerboardPanelArround.setBackground(Color.YELLOW);
-        // checkerboardPanelArround.add(squares[i], c);
-
         JPanel logPanel = new JPanel(new BorderLayout());
         textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+
+        JPanel checkerboardAndLogPanel = new JPanel(new BorderLayout());
         checkerboardAndLogPanel.add(checkerboardPanel, BorderLayout.CENTER);
         checkerboardAndLogPanel.add(logPanel, BorderLayout.LINE_END);
 
@@ -141,10 +153,9 @@ public class GUI extends JFrame {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
         this.setContentPane(contentPane);
 
-
         logPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         logPanel.add(new JScrollPane(textPanel), BorderLayout.CENTER);
-        logPanel.setPreferredSize(new Dimension(300,checkerboardPanel.getHeight()));
+        logPanel.setPreferredSize(new Dimension(300, checkerboardPanel.getHeight()));
 
         logPanel.setBackground(contentPane.getBackground());
 
@@ -157,46 +168,46 @@ public class GUI extends JFrame {
     }
 
     private static JLabel generateLog(String logType, String message) {
-    // Ustalenie formatu daty
-    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-    String timestamp = dateFormat.format(new Date());
-    JTextArea textBox = new JTextArea();
-    // Tworzenie formatowanego logu
-    StringBuilder logBuilder = new StringBuilder();
-    logBuilder.append("[").append(timestamp).append("] - ");
+        // Ustalenie formatu daty
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+        String timestamp = dateFormat.format(new Date());
+        JTextArea textBox = new JTextArea();
+        // Tworzenie formatowanego logu
+        StringBuilder logBuilder = new StringBuilder();
+        logBuilder.append("[").append(timestamp).append("] - ");
 
-    // Wybór koloru i stylu tekstu w zależności od rodzaju logu
-    Color textColor;
-    int fontStyle;
-    switch (logType) {
-        case "ERROR":
-            textColor = Color.RED;
-            fontStyle = Font.BOLD;
-            break;
-        case "MOVE":
-            textColor = Color.GRAY;
-            fontStyle = Font.PLAIN;
-            break;
-        case "INFO":
-        default:
-            textColor = Color.BLUE;
-            fontStyle = Font.PLAIN;
-            break;
+        // Wybór koloru i stylu tekstu w zależności od rodzaju logu
+        Color textColor;
+        int fontStyle;
+        switch (logType) {
+            case "ERROR":
+                textColor = Color.RED;
+                fontStyle = Font.BOLD;
+                break;
+            case "MOVE":
+                textColor = Color.GRAY;
+                fontStyle = Font.PLAIN;
+                break;
+            case "INFO":
+            default:
+                textColor = Color.BLUE;
+                fontStyle = Font.PLAIN;
+                break;
+        }
+
+        // Dodanie wiadomości do logu
+        logBuilder.append(logType).append(" - ").append(message).append("\n");
+
+        // Tworzenie JLabel z odpowiednimi właściwościami formatowania tekstu
+        JLabel logLabel = new JLabel(logBuilder.toString());
+        logLabel.setForeground(textColor);
+        logLabel.setFont(new Font(textBox.getFont().getName(), fontStyle, 15));
+
+        logLabel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        return logLabel;
     }
 
-    // Dodanie wiadomości do logu
-    logBuilder.append(logType).append(" - ").append(message).append("\n");
-
-    // Tworzenie JLabel z odpowiednimi właściwościami formatowania tekstu
-    JLabel logLabel = new JLabel(logBuilder.toString());
-    logLabel.setForeground(textColor);
-    logLabel.setFont(new Font(textBox.getFont().getName(), fontStyle, 15));
-
-    logLabel.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
-    return logLabel;
-}
-
-    public static void updateLog(String logType, String message){
+    public static void updateLog(String logType, String message) {
         textPanel.add(generateLog(logType, message), BorderLayout.CENTER);
     }
 
@@ -241,7 +252,7 @@ public class GUI extends JFrame {
             checkerboardPanel.add(squares[i], c);
         }
     }
-    
+
     /**
      * Add checker pieces to the GUI corresponding to the game state
      */
@@ -431,7 +442,7 @@ public class GUI extends JFrame {
                 possibleMoves = game.getValidMoves(pos);
                 if (possibleMoves.size() == 0) {
                     MoveFeedback feedback = game.moveFeedbackClick(pos);
-                    updateLog("INFO",feedback.toString());
+                    updateLog("INFO", feedback.toString());
                     if (feedback == MoveFeedback.FORCED_JUMP) {
                         // show movable jump pieces
                         onHelpMovablesClick();
@@ -448,7 +459,7 @@ public class GUI extends JFrame {
      * @param actionEvent
      */
     private void onGhostButtonClick(ActionEvent actionEvent) {
-        updateLog("MOVE","HUMAN");
+        updateLog("MOVE", "HUMAN");
         if (!game.isGameOver() && game.getTurn() == Player.HUMAN) {
             hintMove = null;
             helpMoves = null;
@@ -476,7 +487,7 @@ public class GUI extends JFrame {
     }
 
     private void aiMove() {
-        updateLog("MOVE","AI");
+        updateLog("MOVE", "AI");
         // perform AI move
         long startTime = System.nanoTime();
         game.aiMove();

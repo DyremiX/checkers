@@ -13,6 +13,7 @@ public enum Colour {
             result = WHITE;
         }
         if(result == null){
+            GUI.updateLog("ERROR","Null piece has no opposite.");
             throw new RuntimeException("Null piece has no opposite");
         }
         return result;
